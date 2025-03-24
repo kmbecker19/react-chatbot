@@ -4,10 +4,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MessageField from '../components/MessageField';
 
-interface Message {
-  role: string;
-  content: string;
-}
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([
@@ -43,7 +39,11 @@ export default function ChatPage() {
         <Header />
         <Separator />
         <MessageField messages={messages} />
-        <Footer />
+        <Footer 
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          handleSendMessage={handleSendMessage}
+        />
       </Flex>
     </Flex>
   );

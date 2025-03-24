@@ -1,13 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
-
-interface Message {
-  role: string;
-  content: string;
-}
-interface MessageList {
-  messages: Message[];
-}
+import { MessageList } from '../utils/interfaces';
 
 export default function MessageField({ messages }: MessageList) {
   const AlwaysScrollToBottom = () => {
