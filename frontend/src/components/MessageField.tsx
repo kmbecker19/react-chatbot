@@ -15,7 +15,7 @@ export default function MessageField({ messages }: MessageList) {
         if (item.role === 'user') {
           return (
             <Flex key={index} w='100%' justify='flex-end'>
-              <Flex my={1} p={2} bg='blue.400' color='white' minW='2xs' maxW='sm'>
+              <Flex my={1} p={2} bg='blue.400' color='white' minW='3xs' maxW='sm'>
                 <Text flexWrap='wrap'>{item.content}</Text>
               </Flex>
             </Flex>
@@ -23,7 +23,7 @@ export default function MessageField({ messages }: MessageList) {
         } else {
           return (
             <Flex key={index} w='100%'>
-              <Flex my={1} p={2} bg='gray.200' minW='2xs' maxW='sm'>
+              <Flex my={1} p={2} bg='gray.200' minW='3xs' maxW='sm'>
                 <Text>{item.content}</Text>
               </Flex>
             </Flex>
