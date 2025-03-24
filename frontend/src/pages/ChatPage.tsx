@@ -1,5 +1,5 @@
 import { useState, } from 'react';
-import { Flex, Heading, Box, Separator } from '@chakra-ui/react';
+import { Flex, Separator } from '@chakra-ui/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import MessageField from '../components/MessageField';

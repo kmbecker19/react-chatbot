@@ -10,18 +10,22 @@ export default function MessageField({ messages }: MessageList) {
   }
 
   return (
-    <Flex w='100%' h='80%' overflowY='scroll' flexDir='column'>
+    <Flex w='100%' h='80%' overflowY='scroll' flexDir='column' p={3}>
       {messages.map((item, index) => {
         if (item.role === 'user') {
           return (
-            <Flex key={index} w='100%' p={2} bg='blue.200' justify='flex-end'>
-              <Text color='white'>{item.content}</Text>
+            <Flex key={index} w='100%' justify='flex-end'>
+              <Flex my={1} p={2} bg='blue.400' color='white' minW='2xs' maxW='sm'>
+                <Text flexWrap='wrap'>{item.content}</Text>
+              </Flex>
             </Flex>
           );
         } else {
           return (
-            <Flex key={index} w='100%' p={2} bg='gray.100'>
-              <Text>{item.content}</Text>
+            <Flex key={index} w='100%'>
+              <Flex my={1} p={2} bg='gray.200' minW='2xs' maxW='sm'>
+                <Text>{item.content}</Text>
+              </Flex>
             </Flex>
           );
         }
