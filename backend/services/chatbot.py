@@ -3,7 +3,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage, trim_messages
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 # Initialize the chat model
 model = init_chat_model('gpt-4o-mini', model_provider='openai')
@@ -45,12 +45,9 @@ workflow.add_node('model', call_model)
 
 app = workflow.compile(checkpointer=MemorySaver())
 
-# Config object for running app
-config = {'configurable': {'thread_id': uuid4()}}
-
 
 # Function to return AIMessage
-def get_ai_message(query: str) -> AIMessage:
+def get_ai_message(query: str, thread_id: UUID | str) -> AIMessage:
     input_messages = [HumanMessage(query)]
-    output = app.invoke({'messages': input_messages}, config)
+    output = app.invoke({'messages': input_messages}, {'configurable': {'thread_id': thread_id}})
     return output['messages'][-1]
