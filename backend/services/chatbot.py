@@ -2,7 +2,7 @@ from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, trim_messages
 from uuid import uuid4
 
 # Initialize the chat model
@@ -19,11 +19,24 @@ prompt_template = ChatPromptTemplate.from_messages(
     ]
 )
 
+# Messages trimmer
+trimmer = trim_messages(
+    max_tokens=1024,
+    strategy='last',
+    token_counter=model,
+    include_system=True,
+    allow_partial=False,
+    start_on='human',
+)
+
+
 # Function to call model
 def call_model(state: MessagesState):
-    prompt = prompt_template.invoke(state)
+    trimmed_msg = trimmer.invoke(state['messages'])
+    prompt = prompt_template.invoke({'messages': trimmed_msg})
     response = model.invoke(prompt)
     return {'messages': response}
+
 
 # Initialize the state graph
 workflow = StateGraph(state_schema=MessagesState)
