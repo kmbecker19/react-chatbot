@@ -51,3 +51,7 @@ def get_ai_message(query: str, thread_id: UUID | str) -> AIMessage:
     input_messages = [HumanMessage(query)]
     output = app.invoke({'messages': input_messages}, {'configurable': {'thread_id': thread_id}})
     return output['messages'][-1]
+
+
+def invoke_model(input_messages, thread_id):
+    return app.invoke({'messages': input_messages}, {'configurable': {'thread_id': thread_id}})
