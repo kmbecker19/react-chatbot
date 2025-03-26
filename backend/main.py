@@ -37,10 +37,12 @@ def create_conversation(session: SessionDep):
 
 
 @app.post('/chat/{thread_id}', response_model=Message)
-def get_completion(thread_id: str, content: str, session: SessionDep):
+def get_completion(thread_id: str, message: Message, session: SessionDep):
     thread = session.get(ConversationThread, thread_id)
     if not thread:
         raise HTTPException(status_code=404, detail="Thread not found")
+    message = Message.model_validate(message)
+    content = message.content
     input_message = [HumanMessage(content)]
     output = invoke_model(input_message, thread_id)
     completion = output['messages'][-1]

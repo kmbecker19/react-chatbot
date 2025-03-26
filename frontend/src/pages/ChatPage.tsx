@@ -1,4 +1,4 @@
-import { useState, } from 'react';
+import { useState, useEffect } from 'react';
 import { Flex, Separator } from '@chakra-ui/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,15 +7,18 @@ import MessageField from '../components/MessageField';
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([
-    { role: "computer", content: "Hi, My Name is HoneyChat" },
-    { role: "user", content: "Hey there" },
-    { role: "user", content: "Hi, I'm Kyle." },
-    {
-      role: "computer",
-      content: "Nice to meet you. You can send me message and i'll reply you with same message.",
-    },
+    { role: "assistant", content: "Hi, My Name is HoneyChat" },
   ]);
   const [inputMessage, setInputMessage] = useState("");
+
+  const [threadId, setThreadId] = useState("");
+
+  useEffect(() => {
+    fetch('http://localhost:8000/chat', { method: 'POST' })
+     .then((response) => response.json())
+     .then((thread) => setThreadId(thread.id))
+     .catch((error) => console.error('Error:', error));
+  }, []);
 
   const handleSendMessage = () => {
     if (!!inputMessage.trim().length) {
@@ -27,9 +30,23 @@ export default function ChatPage() {
 
       // Echo user message with computer message
       // TODO: Implement Query chatbot here
-      setTimeout(() => {
-        setMessages((old) => [...old, { role: 'computer', content: data }]);
-      }, 1000);
+      // setTimeout(() => {
+      //   setMessages((old) => [...old, { role: 'computer', content: data }]);
+      // }, 1000);
+
+      console.log(JSON.stringify({ content: data }));
+
+      // Send user message to server
+      fetch(`http://localhost:8000/chat/${threadId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: 'user', content: data }),
+      })
+        .then((response) => response.json())
+        .then((response) => setMessages((old) => [...old, { role: 'assistant', content: response.content }]))
+        .catch((error) => console.error('Error:', error));
     }
   };
 
