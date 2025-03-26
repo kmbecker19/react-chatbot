@@ -16,3 +16,7 @@ export interface FooterProps {
   setInputMessage: (value: string) => void;
   handleSendMessage: () => void;
 }
+
+export interface MarkdownProps {
+  content: string;
+}

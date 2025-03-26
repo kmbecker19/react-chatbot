@@ -1,6 +1,22 @@
 import { useEffect, useRef } from 'react';
-import { Flex, Text } from '@chakra-ui/react';
-import { MessageList } from '../utils/interfaces';
+import { Flex, Text, Heading, Code, Em, List, Blockquote, Box } from '@chakra-ui/react';
+import { MessageList, MarkdownProps } from '../utils/interfaces';
+import Markdown from 'react-markdown';
+import { Components } from 'react-markdown';
+
+function ChakraMarkdown( { content }: MarkdownProps) {
+  const components: Components = {
+    h1: ({ node, ...props }) => <Heading {...props} />,
+    h2: ({ node, ...props }) => <Heading {...props} />,
+    h3: ({ node, ...props }) => <Heading {...props} />,
+    p: ({ node, ...props }) => <Text as='p' display='block' whiteSpace='pre-line' {...props} />,
+    code: ({ node, children, ...props }) => <Code {...props}>{children}</Code>,
+    em: ({ node, ...props }) => <Em {...props} />,
+    strong: ({ node, ...props }) => <Em fontWeight='bold' {...props} />,
+    br: () => <Box as='br' />,
+  }
+  return <Markdown components={components}>{content}</Markdown>;
+}
 
 export default function MessageField({ messages }: MessageList) {
   const AlwaysScrollToBottom = () => {
@@ -24,7 +40,7 @@ export default function MessageField({ messages }: MessageList) {
           return (
             <Flex key={index} w='100%'>
               <Flex my={1} p={2} bg='gray.200' minW='3xs' maxW='sm'>
-                <Text>{item.content}</Text>
+                <ChakraMarkdown content={item.content} />
               </Flex>
             </Flex>
           );
