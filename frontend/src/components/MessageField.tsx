@@ -9,11 +9,12 @@ function ChakraMarkdown( { content }: MarkdownProps) {
     h1: ({ node, ...props }) => <Heading {...props} />,
     h2: ({ node, ...props }) => <Heading {...props} />,
     h3: ({ node, ...props }) => <Heading {...props} />,
-    p: ({ node, ...props }) => <Text as='p' display='block' whiteSpace='pre-line' {...props} />,
-    code: ({ node, children, ...props }) => <Code {...props}>{children}</Code>,
+    p: ({ node, ...props }) => <Text {...props} />,
+    code: ({ node, children, ...props }) => <Code p={1} maxW='xl' {...props}>{children}</Code>,
     em: ({ node, ...props }) => <Em {...props} />,
     strong: ({ node, ...props }) => <Em fontWeight='bold' {...props} />,
-    br: () => <Box as='br' />,
+    ul: ({ node, ...props }) => <List.Root as='ul' {...props} />,
+    li: ({ node, ...props }) => <List.Item as='li' {...props} />,
   }
   return <Markdown components={components}>{content}</Markdown>;
 }
@@ -31,7 +32,7 @@ export default function MessageField({ messages }: MessageList) {
         if (item.role === 'user') {
           return (
             <Flex key={index} w='100%' justify='flex-end'>
-              <Flex my={1} p={2} bg='blue.400' color='white' minW='3xs' maxW='sm'>
+              <Flex my={1} p={2} bg='blue.400' color='white' minW='3xs' maxW='xl'>
                 <Text flexWrap='wrap'>{item.content}</Text>
               </Flex>
             </Flex>
@@ -39,7 +40,7 @@ export default function MessageField({ messages }: MessageList) {
         } else {
           return (
             <Flex key={index} w='100%'>
-              <Flex my={1} p={2} bg='gray.200' minW='3xs' maxW='sm'>
+              <Flex my={1} p={2} bg='gray.200' minW='3xs' maxW='xl' flexDir='column' gap={5}>
                 <ChakraMarkdown content={item.content} />
               </Flex>
             </Flex>
