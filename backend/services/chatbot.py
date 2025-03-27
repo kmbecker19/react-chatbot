@@ -70,3 +70,7 @@ def get_ai_message(query: str, thread_id: UUID | str) -> AIMessage:
 
 def invoke_model(input_messages, thread_id):
     return app.invoke({'messages': input_messages, 'name': CHAT_NAME}, {'configurable': {'thread_id': thread_id}})
+
+
+async def ainvoke_model(input_messages, thread_id):
+    return await app.ainvoke({'messages': input_messages, 'name': CHAT_NAME}, {'configurable': {'thread_id': thread_id}})

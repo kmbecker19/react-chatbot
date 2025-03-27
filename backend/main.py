@@ -6,7 +6,7 @@ from typing import Annotated
 from langchain_core.messages import HumanMessage
 from models import Message, ConversationThread
 from database import SessionDep, lifespan
-from services.chatbot import invoke_model
+from services.chatbot import invoke_model, ainvoke_model
 
 import uvicorn
 
@@ -37,14 +37,14 @@ def create_conversation(session: SessionDep):
 
 
 @app.post('/chat/{thread_id}', response_model=Message)
-def get_completion(thread_id: str, message: Message, session: SessionDep):
+async def get_completion(thread_id: str, message: Message, session: SessionDep):
     thread = session.get(ConversationThread, thread_id)
     if not thread:
         raise HTTPException(status_code=404, detail="Thread not found")
     message = Message.model_validate(message)
     content = message.content
     input_message = [HumanMessage(content)]
-    output = invoke_model(input_message, thread_id)
+    output = await ainvoke_model(input_message, thread_id)
     completion = output['messages'][-1]
     return Message(id=completion.id, role='assistant', content=completion.content, thread_id=thread_id)
 
