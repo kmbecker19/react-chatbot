@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Flex, Text, Heading, Code, Em, List, Blockquote, Box } from '@chakra-ui/react';
+import { Flex, Text, Heading, Code, Em, List, } from '@chakra-ui/react';
 import { MessageList, MarkdownProps } from '../utils/interfaces';
 import Markdown from 'react-markdown';
 import { Components } from 'react-markdown';
@@ -13,8 +13,7 @@ function ChakraMarkdown( { content }: MarkdownProps) {
     code: ({ node, children, ...props }) => <Code p={1} maxW='xl' {...props}>{children}</Code>,
     em: ({ node, ...props }) => <Em {...props} />,
     strong: ({ node, ...props }) => <Em fontWeight='bold' {...props} />,
-    ul: ({ node, ...props }) => <List.Root as='ul' {...props} />,
-    li: ({ node, ...props }) => <List.Item as='li' {...props} />,
+    ul: ({ node, children, ...props }) => <List.Root {...props}>{children}</List.Root>,
   }
   return <Markdown components={components}>{content}</Markdown>;
 }
