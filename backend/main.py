@@ -7,6 +7,7 @@ from langchain_core.messages import HumanMessage
 from models import Message, ConversationThread
 from database import SessionDep, lifespan
 from services.chatbot import invoke_model, ainvoke_model
+from services.agent import ainvoke_agent
 
 import uvicorn
 
@@ -44,7 +45,7 @@ async def get_completion(thread_id: str, message: Message, session: SessionDep):
     message = Message.model_validate(message)
     content = message.content
     input_message = [HumanMessage(content)]
-    output = await ainvoke_model(input_message, thread_id)
+    output = await ainvoke_agent(input_message, thread_id)
     completion = output['messages'][-1]
     return Message(id=completion.id, role='assistant', content=completion.content, thread_id=thread_id)
 
