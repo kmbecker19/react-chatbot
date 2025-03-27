@@ -9,7 +9,8 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, trim_m
 
 from langgraph.prebuilt import create_react_agent
 from langchain_community.tools.tavily_search import TavilySearchResults
-from uuid import uuid4, UUID
+from langchain_community.tools import WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
 
 
 # Prompt
@@ -99,7 +100,8 @@ model = init_chat_model('gpt-4o-mini', model_provider='openai')
 
 # Initialize the tools
 search = TavilySearchResults(max_results=5)
-tools = [search]
+wiki = WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper())
+tools = [search, wiki]
 
 # Create agent
 agent_exec = create_react_agent(
