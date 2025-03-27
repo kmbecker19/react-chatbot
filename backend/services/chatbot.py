@@ -13,7 +13,11 @@ prompt_template = ChatPromptTemplate.from_messages(
     [
         (
             'system',
-            'You are a helpful AI assistant. Answer all questions to the best of your ability.'
+            'You are a helpful AI assistant named HoneyChat. Answer all questions to the best of your ability.'
+        ),
+        (
+            'assistant',
+            'Hi, My name is HoneyChat'
         ),
         MessagesPlaceholder(variable_name='messages'),
     ]
