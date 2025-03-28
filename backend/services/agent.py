@@ -124,3 +124,8 @@ async def ainvoke_agent_stream(input_messages, thread_id):
       ):
         if metadata['langgraph_node'] == 'agent' and (text := step.text()):
             yield text
+
+# Function to get chat history
+def get_chat_history(thread_id):
+    state = agent_exec.get_state({'configurable': {'thread_id': thread_id}})
+    return state.values['messages']

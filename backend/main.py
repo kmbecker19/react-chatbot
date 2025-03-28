@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from typing import Annotated
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from models import Message, MessageCreate, ConversationThread
 from database import SessionDep, lifespan
 from services.chatbot import invoke_model, ainvoke_model
-from services.agent import ainvoke_agent
+from services.agent import ainvoke_agent, get_chat_history
 
 import uvicorn
 
@@ -54,6 +54,24 @@ async def get_completion(thread_id: str, message: MessageCreate, session: Sessio
 @app.get('/chat', response_model=list[ConversationThread])
 def get_all_conversations(session: SessionDep):
     return session.exec(select(ConversationThread)).all()
+
+
+@app.get('/chat/{thread_id}', response_model=list[Message])
+def get_conversation(thread_id: str, session: SessionDep):
+    thread = session.get(ConversationThread, thread_id)
+    if not thread:
+        raise HTTPException(status_code=404, detail="Thread not found")
+    history = get_chat_history(thread.id)
+    messages = []
+    for message in history:
+        if isinstance(message, HumanMessage):
+            role = 'user'
+        elif isinstance(message, AIMessage):
+            role = 'assistant'
+        else:
+            role ='system'
+        messages.append(Message(id=message.id, role=role, content=message.content, thread_id=thread.id))
+    return messages
 
 
 if __name__ == '__main__':
