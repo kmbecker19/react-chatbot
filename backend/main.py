@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
 from typing import Annotated
@@ -7,7 +8,7 @@ from langchain_core.messages import HumanMessage
 from models import Message, MessageCreate, ConversationThread
 from database import SessionDep, lifespan
 from services.chatbot import invoke_model, ainvoke_model
-from services.agent import ainvoke_agent
+from services.agent import ainvoke_agent, ainvoke_agent_stream
 
 import uvicorn
 
@@ -45,11 +46,21 @@ async def get_completion(thread_id: str, message: MessageCreate, session: Sessio
     if not thread:
         raise HTTPException(status_code=404, detail="Thread not found")
     content = message.content
-    input_message = HumanMessage(content)
+    input_message = [HumanMessage(content)]
     output = await ainvoke_agent(input_message, thread_id)
     completion = output['messages'][-1]
     return Message(id=completion.id, role='assistant', content=completion.content, thread_id=thread_id)
 
+
+@app.post('/chat/{thread_id}/stream')
+async def get_completion_stream(thread_id: str, message: MessageCreate, session: SessionDep):
+    thread = session.get(ConversationThread, thread_id)
+    if not thread:
+        raise HTTPException(status_code=404, detail="Thread not found")
+    content = message.content
+    input_message = [HumanMessage(content)]
+    return StreamingResponse(ainvoke_agent_stream(input_message, thread_id))
+    
 
 @app.get('/chat', response_model=list[ConversationThread])
 def get_all_conversations(session: SessionDep):

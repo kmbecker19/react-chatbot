@@ -117,7 +117,7 @@ async def ainvoke_agent(input_messages, thread_id):
     return await agent_exec.ainvoke({'messages': input_messages, 'name': 'HoneyChat'}, {'configurable': {'thread_id': thread_id}})
 
 async def ainvoke_agent_stream(input_messages, thread_id):
-    for step, metadata in agent_exec.astream(
+    for step, metadata in agent_exec.stream(
         {'messages': input_messages, 'name': 'HoneyChat'},
         {'configurable': {'thread_id': thread_id}},
         stream_mode='messages',
