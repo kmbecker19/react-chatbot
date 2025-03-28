@@ -133,3 +133,12 @@ def invoke_model(input_messages, thread_id):
 async def ainvoke_model(input_messages, thread_id):
     return await app.ainvoke({'messages': input_messages, 'name': CHAT_NAME}, {'configurable': {'thread_id': thread_id}})
 
+async def ainvoke_model_stream(input_messages, thread_id):
+    for chunk, _ in app.astream(
+        {'messages': input_messages, 'name': CHAT_NAME},
+        {'configurable': {'thread_id': thread_id}},
+        stream_mode='messages',
+    ):
+        if isinstance(chunk, AIMessage):
+            yield chunk.content
+
