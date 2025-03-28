@@ -2,10 +2,10 @@ from typing import Sequence, Annotated, TypedDict
 
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import START, MessagesState, StateGraph, add_messages
+from langgraph.graph import START, StateGraph, add_messages
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, trim_messages
-from uuid import uuid4, UUID
+from uuid import UUID
 
 
 CHAT_NAME = 'HoneyChat'
@@ -133,6 +133,7 @@ def invoke_model(input_messages, thread_id):
 async def ainvoke_model(input_messages, thread_id):
     return await app.ainvoke({'messages': input_messages, 'name': CHAT_NAME}, {'configurable': {'thread_id': thread_id}})
 
+
 async def ainvoke_model_stream(input_messages, thread_id):
     for chunk, _ in app.astream(
         {'messages': input_messages, 'name': CHAT_NAME},
@@ -141,4 +142,3 @@ async def ainvoke_model_stream(input_messages, thread_id):
     ):
         if isinstance(chunk, AIMessage):
             yield chunk.content
-

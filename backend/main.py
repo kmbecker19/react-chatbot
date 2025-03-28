@@ -1,13 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select
-from typing import Annotated
 
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from models import Message, MessageCreate, ConversationThread
 from database import SessionDep, lifespan
-from services.chatbot import invoke_model, ainvoke_model
 from services.agent import ainvoke_agent, get_chat_history, ainvoke_agent_stream
 
 import uvicorn
@@ -60,7 +58,7 @@ async def get_completion_stream(thread_id: str, message: MessageCreate, session:
     content = message.content
     input_message = [HumanMessage(content)]
     return StreamingResponse(ainvoke_agent_stream(input_message, thread_id))
-    
+
 
 @app.get('/chat', response_model=list[ConversationThread])
 def get_all_conversations(session: SessionDep):
@@ -80,8 +78,9 @@ def get_conversation(thread_id: str, session: SessionDep):
         elif isinstance(message, AIMessage):
             role = 'assistant'
         else:
-            role ='system'
-        messages.append(Message(id=message.id, role=role, content=message.content, thread_id=thread.id))
+            role = 'system'
+        messages.append(Message(id=message.id, role=role,
+                        content=message.content, thread_id=thread.id))
     return messages
 
 

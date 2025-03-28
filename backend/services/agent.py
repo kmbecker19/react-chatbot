@@ -2,10 +2,10 @@ from typing import Sequence, Annotated, TypedDict
 
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import START, MessagesState, StateGraph, add_messages
+from langgraph.graph import add_messages
 from langgraph.managed import IsLastStep
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, trim_messages
+from langchain_core.messages import BaseMessage
 
 from langgraph.prebuilt import create_react_agent
 from langchain_community.tools.tavily_search import TavilySearchResults
@@ -93,7 +93,7 @@ class State(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
     is_last_step: IsLastStep
     remaining_steps: int
-    
+
 
 # Initialize the chat model
 model = init_chat_model('gpt-4o-mini', model_provider='openai')
@@ -112,18 +112,21 @@ agent_exec = create_react_agent(
     checkpointer=MemorySaver(),
 )
 
+
 # Function to invoke agent
 async def ainvoke_agent(input_messages, thread_id):
     return await agent_exec.ainvoke({'messages': input_messages, 'name': 'HoneyChat'}, {'configurable': {'thread_id': thread_id}})
+
 
 async def ainvoke_agent_stream(input_messages, thread_id):
     for step, metadata in agent_exec.stream(
         {'messages': input_messages, 'name': 'HoneyChat'},
         {'configurable': {'thread_id': thread_id}},
         stream_mode='messages',
-      ):
+    ):
         if metadata['langgraph_node'] == 'agent' and (text := step.text()):
             yield text
+
 
 # Function to get chat history
 def get_chat_history(thread_id):
