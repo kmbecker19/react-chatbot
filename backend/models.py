@@ -4,6 +4,7 @@ from uuid import uuid4
 
 class ConversationThread(SQLModel, table=True):
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
+    summary: str = Field(default='New Chat')
 
 
 class Message(SQLModel, table=True):
